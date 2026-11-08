@@ -591,6 +591,10 @@ document.addEventListener('click', async (e) => {
     case 'toggle-compare': toggleCompare(); el.closest('form')?.elements.user2?.focus(); break;
     case 'cancel-search': actions.cancel(); break;
     case 'retry': actions.retry(); break;
+    case 'unblur-nsfw':
+      await actions.updateSettings({ blurNsfw: false });
+      toast('NSFW- und Spoiler-Bilder werden dauerhaft ohne Unschärfe angezeigt. Änderbar in den Einstellungen.', { kind: 'ok' });
+      break;
     case 'nav': navigate(el.dataset.view); break;
     case 'rerun-history': {
       const rec = state.history.find((r) => r.id === el.dataset.id);

@@ -443,9 +443,8 @@ select { padding-right: 28px; }
 .post-card.has-image .pc-body { grid-template-columns: minmax(0, 1fr) 148px; }
 .pc-main { display: grid; gap: 6px; align-content: start; min-width: 0; }
 .pc-title { font-size: var(--fs-lg); font-weight: 620; line-height: 1.35; overflow-wrap: anywhere; }
-.pc-title button { all: unset; cursor: pointer; display: inline; }
-.pc-title button:hover { color: var(--accent-text); }
-.pc-title button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+.pc-title a, .detail-title a { color: inherit; }
+.pc-title a:hover, .detail-title a:hover { color: var(--accent-text); }
 .pc-xpost { display: flex; align-items: center; gap: 6px; font-size: var(--fs-xs); color: var(--info); }
 .pc-xpost svg { width: 14px; height: 14px; }
 .pc-excerpt { color: var(--text-2); font-size: var(--fs-sm); line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
@@ -469,6 +468,8 @@ select { padding-right: 28px; }
 .thumb-overlay { position: absolute; right: 6px; bottom: 6px; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 4px; background: rgba(0, 0, 0, .6); color: #fff; }
 .thumb-overlay svg { width: 13px; height: 13px; }
 .thumb-flag { position: absolute; left: 6px; top: 6px; padding: 1px 6px; border-radius: 3px; font-size: 0.625rem; font-weight: 700; background: rgba(0, 0, 0, .65); color: #fff; letter-spacing: .04em; }
+.thumb-flag.unblur { border: 0; cursor: pointer; padding: 3px 7px; }
+.thumb-flag.unblur:hover { background: var(--accent); }
 .pc-actions { display: flex; align-items: center; gap: 4px; padding-top: 8px; border-top: 1px solid var(--line-soft); flex-wrap: wrap; }
 .pc-actions .btn.ghost { border-color: transparent; color: var(--text-2); }
 .pc-actions .btn.ghost:hover { color: var(--text); background: var(--surface-2); }
@@ -485,7 +486,7 @@ select { padding-right: 28px; }
 @keyframes shimmer { from { background-position: 100% 0; } to { background-position: -200% 0; } }
 
 /* ============ Virtuelle Tabelle ============ */
-.vtable { border: 1px solid var(--line-soft); border-radius: var(--r-lg); background: var(--surface); --cols: 104px minmax(120px, 190px) minmax(0, 1fr) 118px 72px 76px; }
+.vtable { border: 1px solid var(--line-soft); border-radius: var(--r-lg); background: var(--surface); --cols: 104px minmax(120px, 190px) minmax(0, 1fr) 118px 72px 104px; }
 .vt-head, .vt-row { display: grid; grid-template-columns: var(--cols); align-items: center; gap: 12px; padding: 0 12px; }
 .vt-head { position: sticky; top: 0; z-index: 5; height: 38px; background: var(--surface-2); border-bottom: 1px solid var(--line); border-radius: var(--r-lg) var(--r-lg) 0 0; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text-3); font-weight: 650; }
 .vt-head button { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
@@ -503,9 +504,8 @@ select { padding-right: 28px; }
 .c-time { color: var(--text-3); font-size: 0.6875rem; }
 .c-sub .pc-sub { font-size: var(--fs-xs); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; display: block; text-align: left; }
 .c-title { display: flex; align-items: center; gap: 8px; }
-.c-title button { all: unset; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 550; min-width: 0; }
-.c-title button:hover { color: var(--accent-text); }
-.c-title button:focus-visible { outline: 2px solid var(--accent); }
+.c-title a { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 550; min-width: 0; color: var(--text); }
+.c-title a:hover { color: var(--accent-text); }
 .c-type { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-xs); color: var(--text-2); }
 .c-type svg { width: 14px; height: 14px; }
 .c-score { text-align: right; font-size: var(--fs-xs); color: var(--text-2); }
@@ -731,7 +731,7 @@ select { padding-right: 28px; }
   .pc-badges { margin-left: 0; }
   .pc-title { font-size: var(--fs-md); }
   .pc-sources { margin-left: 0; }
-  .vtable { --cols: 78px minmax(0, 1fr) 64px; }
+  .vtable { --cols: 78px minmax(0, 1fr) 96px; }
   .vt-head .c-subreddit, .vt-head .c-type, .vt-head .c-score, .vt-row .c-sub, .vt-row .c-type, .vt-row .c-score { display: none; }
   .vt-head .c-date, .vt-head .c-title, .vt-head .c-actions { display: block; }
   .sub-row { grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; padding: 12px; }

@@ -31,6 +31,7 @@ function buildMockPosts() {
       title: `Mock-Beitrag Nummer ${i} in r/${sub}`,
       selftext: image ? '' : `Mock-Text ${i}. `.repeat(i % 5 === 0 ? 60 : 3),
       is_self: !image,
+      over_18: i === 0,
       post_hint: image ? 'image' : 'self',
       url: image ? `https://i.redd.it/mock${i}.jpg` : `https://www.reddit.com/r/${sub}/comments/m${i}/`,
       preview: image ? { images: [{ source: { url: `https://preview.redd.it/mock${i}.jpg?width=640`, width: 640, height: 480 }, resolutions: [] }] } : undefined,
@@ -225,6 +226,7 @@ await step('Kartenansicht lädt schrittweise, Tabellenansicht ist virtualisiert'
   const rows = await desktop.locator('.vt-row').count();
   assert.ok(rows < 80, `Tabellenzeilen im DOM: ${rows}`);
   assert.equal(await desktop.locator('.vtable').getAttribute('aria-rowcount'), String(POSTS_SHOWN + 1));
+  assert.equal(await desktop.locator('.c-title a').first().getAttribute('target'), '_blank');
   await desktop.evaluate(() => { document.getElementById('view').scrollTop = 60000; });
   await desktop.waitForTimeout(200);
   const idx = Number(await desktop.locator('.vt-row').first().getAttribute('aria-rowindex'));
@@ -266,10 +268,31 @@ await step('Langer Titel bricht sauber um', async () => {
   await desktop.press('.filter-panel input[name=query]', 'Enter');
 });
 
+await step('Titel öffnet neuen Tab und NSFW lässt sich dauerhaft entblurren', async () => {
+  await desktop.fill('.filter-panel input[name=query]', '"Nummer 0"');
+  await desktop.press('.filter-panel input[name=query]', 'Enter');
+  await desktop.waitForSelector('.pc-thumb.blurred');
+  const link = desktop.locator('.post-card .pc-title a').first();
+  assert.equal(await link.getAttribute('target'), '_blank');
+  assert.match(await link.getAttribute('rel'), /noopener/);
+  await desktop.context().route('https://www.reddit.com/**', (route) => route.fulfill({ contentType: 'text/html', body: 'Mock-Reddit' }));
+  const popup = desktop.waitForEvent('popup');
+  await link.click();
+  await (await popup).close();
+  await desktop.click('.post-card [data-action=details]');
+  assert.equal(await desktop.locator('.detail-title a').getAttribute('target'), '_blank');
+  await desktop.click('#detail [data-action=unblur-nsfw]');
+  await desktop.waitForSelector('.pc-thumb:not(.blurred)');
+  assert.equal(await desktop.locator('.detail-image.blurred').count(), 0);
+  assert.equal(await desktop.evaluate(() => window.__redditInvestigator.state.settings.blurNsfw), false);
+  await desktop.fill('.filter-panel input[name=query]', '');
+  await desktop.press('.filter-panel input[name=query]', 'Enter');
+});
+
 await step('Fundstelle merken, Notiz speichern, IndexedDB-Persistenz nach Neuladen', async () => {
   await desktop.click('.post-card [data-action=save] >> nth=0');
   await desktop.waitForFunction(() => window.__redditInvestigator.state.findings.size === 1);
-  await desktop.locator('.post-card').nth(1).locator('.pc-title [data-action=details]').click();
+  await desktop.locator('.post-card').nth(1).locator('.pc-actions [data-action=details]').click();
   await desktop.fill('#detail-note', 'Meine Notiz mit "Anführungszeichen" & Ümlauten');
   await desktop.fill('#detail-tags', 'wichtig, prüfen');
   await desktop.press('#detail-tags', 'Tab');
@@ -291,6 +314,7 @@ await step('Fundstelle merken, Notiz speichern, IndexedDB-Persistenz nach Neulad
   await desktop.waitForSelector('.home');
   assert.equal(await desktop.evaluate(() => window.__redditInvestigator.state.findings.size), 2);
   assert.equal(await desktop.evaluate(() => window.__redditInvestigator.state.viewMode), 'table', 'Darstellungsmodus bleibt gespeichert');
+  assert.equal(await desktop.evaluate(() => window.__redditInvestigator.state.settings.blurNsfw), false, 'NSFW bleibt nach Neuladen entblurrt');
   await desktop.click('.nav-item[data-view=findings]');
   await desktop.waitForSelector('.finding');
   await desktop.waitForFunction(() => document.querySelectorAll('.finding .status-badge.ok').length === 2);

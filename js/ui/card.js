@@ -30,7 +30,7 @@ function thumb(post, settings) {
     img,
     post.type === 'video' ? h('span', { class: 'thumb-overlay' }, icon('i-play')) : null,
     post.type === 'gallery' ? h('span', { class: 'thumb-overlay' }, icon('i-gallery')) : null,
-    blurred ? h('span', { class: 'thumb-flag' }, post.over18 ? 'NSFW' : 'Spoiler') : null
+    blurred ? h('button', { type: 'button', class: 'thumb-flag unblur', 'data-action': 'unblur-nsfw', title: 'Unschärfe dauerhaft aufheben' }, `${post.over18 ? 'NSFW' : 'Spoiler'} · anzeigen`) : null
   );
 }
 
@@ -73,7 +73,7 @@ export function postCard(post, { settings, finding, selected, compare, isNew }) 
     ),
     h('div', { class: 'pc-body' },
       h('div', { class: 'pc-main' },
-        h('h3', { class: 'pc-title', id: `t-${post.id}` }, h('button', { type: 'button', 'data-action': 'details' }, post.title)),
+        h('h3', { class: 'pc-title', id: `t-${post.id}` }, extLink(post.permalink, post.title, { title: 'Auf Reddit in neuem Tab öffnen' })),
         crosspostLine(post),
         text ? h('p', { class: `pc-excerpt${long ? ' clamped' : ''}` }, text) : null,
         long ? h('button', { type: 'button', class: 'link-btn', 'data-action': 'expand', 'aria-expanded': 'false' }, 'Mehr anzeigen') : null,
@@ -115,11 +115,12 @@ export function tableRow(post, { finding, selected, index, compare }) {
     h('div', { role: 'cell', class: 'c-date mono' }, fmt.date(post.createdUtc), h('span', { class: 'c-time' }, fmt.time(post.createdUtc))),
     h('div', { role: 'cell', class: 'c-sub' }, h('button', { type: 'button', class: 'pc-sub', 'data-action': 'filter-sub', 'data-sub': post.subredditKey }, post.isProfile ? `u/${post.subreddit.replace(/^u_/i, '')}` : `r/${post.subreddit}`)),
     h('div', { role: 'cell', class: 'c-title' },
-      h('button', { type: 'button', 'data-action': 'details', title: post.title }, post.title),
+      extLink(post.permalink, post.title, { title: `${post.title} – in neuem Tab öffnen` }),
       compare ? h('span', { class: 'author-chip sm' }, `u/${post.author}`) : null),
     h('div', { role: 'cell', class: `c-type type-${post.type}`, title: meta.label }, icon(meta.icon), h('span', null, meta.label)),
     h('div', { role: 'cell', class: 'c-score mono' }, post.metricsReliable && post.score !== null ? fmt.num(post.score) : '–'),
     h('div', { role: 'cell', class: 'c-actions' },
+      h('button', { type: 'button', class: 'icon-btn sm', 'data-action': 'details', title: 'Details', 'aria-label': 'Details anzeigen' }, icon('i-panel')),
       extLink(post.permalink, icon('i-external'), { class: 'icon-btn sm', title: 'Auf Reddit öffnen', 'aria-label': 'Auf Reddit öffnen' }),
       h('button', { type: 'button', class: `icon-btn sm${finding ? ' active' : ''}`, 'data-action': 'save', 'aria-pressed': String(Boolean(finding)), 'aria-label': finding ? 'Fundstelle entfernen' : 'Als Fundstelle merken', title: finding ? 'Fundstelle entfernen' : 'Merken' }, icon(finding ? 'i-bookmark-fill' : 'i-bookmark'))
     )
