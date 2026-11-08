@@ -1,0 +1,17 @@
+{
+  "name": "reddit-investigator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Lesezeichen-Hub-Modul: findet eigenständige Subreddit-Beiträge eines Reddit-Benutzers.",
+  "scripts": {
+    "start": "node tools/serve.mjs",
+    "test": "node --test \"tests/unit/*.test.js\"",
+    "test:ui": "node tests/ui/ui.test.mjs",
+    "test:live": "node tests/live/arctic-shift.live.mjs",
+    "test:all": "npm test && npm run test:ui"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  }
+}

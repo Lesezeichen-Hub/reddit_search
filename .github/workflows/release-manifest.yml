@@ -1,0 +1,22 @@
+name: Release manifest
+on:
+  release:
+    types: [published]
+permissions:
+  contents: write
+jobs:
+  update-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Update version.json
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          node -e 'const fs=require("fs");const m=JSON.parse(fs.readFileSync("version.json","utf8"));m.version=process.env.TAG;m.release_url=`https://github.com/${process.env.REPOSITORY}/releases/tag/${encodeURIComponent(process.env.TAG)}`;m.updated_at=new Date().toISOString().slice(0,10);fs.writeFileSync("version.json",JSON.stringify(m,null,2)+"\n")'
+          git add version.json
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m "Publish manifest for $TAG" || exit 0
+          git push origin HEAD:main

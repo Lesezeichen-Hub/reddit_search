@@ -1,0 +1,7 @@
+node_modules/
+.npm-cache/
+test-results/
+tests/ui/output/
+server/reddit-adapter
+server/reddit-adapter.exe
+*.log
