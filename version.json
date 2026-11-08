@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.1",
   "name": "Reddit Investigator",
   "description": "Findet eigenständige Beiträge eines Reddit-Benutzers in allen Subreddits über das Arctic-Shift-Archiv – mit Subreddit Explorer, Filtern, Fundstellen und Export.",
   "updated_at": "2026-11-08"
